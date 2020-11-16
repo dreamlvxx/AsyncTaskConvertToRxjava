@@ -17,13 +17,19 @@ public class MainActivity extends AppCompatActivity {
         CoroutinePro co = new CoroutinePro<String,String,String>(){
 
             @Override
-            protected String doInBackground(String... arge) {
-                return "res is " +arge[0];
+            protected String doInBackground(String... args) {
+                Log.e(TAG, "doInBackground: " + Thread.currentThread().getName());
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return "res is " + args[0] + Thread.currentThread().getName();
             }
 
             @Override
             protected void onPostExecute(String res) {
-                Log.e(TAG, "onPostExecute: " + res);
+                Log.e(TAG, "onPostExecute: " + res + Thread.currentThread().getName());
             }
         }.execute("sad");
     }
