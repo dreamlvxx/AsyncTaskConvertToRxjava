@@ -13,7 +13,17 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/CoroutinePro.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/MainActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/MyCoroutin.java">
           <value>
             <set />
           </value>
@@ -24,6 +34,51 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/RxjavaTask.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/com/kingsoft/advertisement/AdvertisementUtils.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/com/kingsoft/bankbill/BankCardListFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/com/kingsoft/bankbill/BillCenterSettingFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/com/kingsoft/bitmap/DecodeTask.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/com/kingsoft/email/activity/setup/AccountCheckSettingsFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/com/kingsoft/email/activity/setup/AccountOptionsFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/com/kingsoft/email/activity/setup/AccountServerBaseFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/com/kingsoft/email/activity/setup/AccountSettings.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/com/kingsoft/email/activity/setup/AccountSettingsFragment.java">
           <value>
             <set />
           </value>

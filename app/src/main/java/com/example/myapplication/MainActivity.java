@@ -1,26 +1,30 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 public class MainActivity extends AppCompatActivity {
+
+    private final static String TAG =  "xxx";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new RxjavaTask<String,Integer,String>(){
+        CoroutinePro co = new CoroutinePro<String,String,String>(){
 
             @Override
-            protected String doInBackground(String... strings) {
-                Log.e("xxx", "doInBackground: params  = " + strings[0] + Thread.currentThread().getName());
-//                String asd = null;
-//                asd.length();
-                return "this is result + x";
+            protected String doInBackground(String... arge) {
+                return "res is " +arge[0];
             }
-        }.execute("PParams");
+
+            @Override
+            protected void onPostExecute(String res) {
+                Log.e(TAG, "onPostExecute: " + res);
+            }
+        }.execute("sad");
     }
 }
