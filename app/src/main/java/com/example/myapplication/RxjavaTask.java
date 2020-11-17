@@ -1,21 +1,34 @@
 package com.example.myapplication;
 
 
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.util.Log;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public abstract class RxjavaTask<Params, Progress, Result>{
 
+    private static final int MESSAGE_POST_PROGRESS = 0x2;
+    private static final String TAG = "xxx";
+
     private Observable<Result> innerObservable;
     private Params[] mParams;
+    private final AtomicBoolean mCancelled = new AtomicBoolean(false);
+    private static InternalHandler sHandler;
+    private Disposable mDisposable;
 
     public RxjavaTask() {
+        sHandler = new InternalHandler(Looper.getMainLooper());
         init();
     }
 
@@ -40,7 +53,8 @@ public abstract class RxjavaTask<Params, Progress, Result>{
                                         Params... params){
         if (null != innerObservable){
             this.mParams = params;
-            this.innerObservable.subscribeOn(Schedulers.from(exec));
+            this.innerObservable = this.innerObservable.subscribeOn(Schedulers.from(exec))
+                    .observeOn(AndroidSchedulers.mainThread());
             subscribeInner();
         }
     }
@@ -48,7 +62,7 @@ public abstract class RxjavaTask<Params, Progress, Result>{
     public final void execute(Params... params){
         if (null != innerObservable){
             this.mParams = params;
-            this.innerObservable.subscribeOn(Schedulers.io());
+            innerObservable = innerObservable.observeOn(AndroidSchedulers.mainThread());
             subscribeInner();
         }
     }
@@ -57,17 +71,18 @@ public abstract class RxjavaTask<Params, Progress, Result>{
         this.innerObservable.subscribe(new Observer<Result>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
+                mDisposable = d;
                 onPreExecute();
             }
 
             @Override
             public void onNext(@NonNull Result result) {
-                onPostExecute(result);
+                finish(result);
             }
 
             @Override
             public void onError(@NonNull Throwable e) {
-                onCancelled();
+                onInnerError(e);
             }
 
             @Override
@@ -77,12 +92,78 @@ public abstract class RxjavaTask<Params, Progress, Result>{
         });
     }
 
+    private void finish(Result result){
+        if (!isCancelled()){
+            onPostExecute(result);
+        }else{
+            onCancelled(result);
+        }
+    }
+
+    protected void onInnerError(@NonNull Throwable e){
+
+    }
+
     protected void onCancelled(Result result){
+        mCancelled.set(true);
         onCancelled();
     }
 
     protected void onCancelled(){
 
+    }
+
+    public final boolean cancel() {
+        mCancelled.set(true);
+        mDisposable.dispose();
+        onCancelled(null);
+        return true;
+    }
+
+    public final boolean isCancelled() {
+        return mCancelled.get();
+    }
+
+    private Handler getHandler() {
+        return sHandler;
+    }
+
+    protected final void publishProgress(Progress... values) {
+        if (!isCancelled()) {
+            getHandler().obtainMessage(MESSAGE_POST_PROGRESS,
+                    new RxjavaTaskResult<>(this, values)).sendToTarget();
+        }
+    }
+
+    protected void onProgressUpdate(Progress... values) {
+
+    }
+
+    private static class InternalHandler extends Handler {
+        public InternalHandler(Looper looper) {
+            super(looper);
+        }
+
+        @SuppressWarnings({"unchecked", "RawUseOfParameterizedType"})
+        @Override
+        public void handleMessage(Message msg) {
+            RxjavaTaskResult<?> result = (RxjavaTaskResult<?>) msg.obj;
+            switch (msg.what) {
+                case MESSAGE_POST_PROGRESS:
+                    result.mTask.onProgressUpdate(result.mData);
+                    break;
+            }
+        }
+    }
+
+    private static class RxjavaTaskResult<Data> {
+        final RxjavaTask mTask;
+        final Data[] mData;
+
+        RxjavaTaskResult(RxjavaTask task, Data... data) {
+            mTask = task;
+            mData = data;
+        }
     }
 
 }

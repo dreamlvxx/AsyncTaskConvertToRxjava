@@ -11,6 +11,7 @@ abstract class CoroutinePro<Params, Progress, Result> {
     fun execute(vararg args: Params): CoroutinePro<Params, Progress, Result> {
         val coroutineScope = CoroutineScope(Dispatchers.Main)
         job = coroutineScope.launch {
+            onPreExecute()
             val res = withContext(Dispatchers.IO) {
                 doInBackground(*args)
             }
@@ -22,6 +23,10 @@ abstract class CoroutinePro<Params, Progress, Result> {
     protected abstract fun doInBackground(vararg args: Params): Result
 
     protected open fun onPostExecute(res: Result) {
+
+    }
+
+    protected open fun onPreExecute(){
 
     }
 
