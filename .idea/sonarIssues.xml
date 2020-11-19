@@ -13,6 +13,16 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/AsyncTask.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/Builders.commonxx.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/CoroutinePro.kt">
           <value>
             <set />
@@ -34,6 +44,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/RxjavaTask.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/TestAS.kt">
           <value>
             <set />
           </value>
@@ -93,12 +108,122 @@
             <set />
           </value>
         </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/email/activity/setup/AccountCheckSettingsFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/email/activity/setup/AccountOptionsFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/email/activity/setup/AccountServerBaseFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/email/activity/setup/AccountSettingsFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/email/activity/setup/AccountSetupBasics.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/email/activity/setup/AccountSetupEng.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/email/activity/setup/AccountSetupOptionsController.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/email/activity/setup/AccountSetupServerFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/email/activity/setup/AuthCodeTaskManager.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/email/activity/setup/MailboxSettings.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/email/activity/setup/MainSettingsFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/email/activity/setup/WebViewCheckAccountTask.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/email/mail/attachment/utils/AttachmentUtils.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/email/provider/AccountReconciler.java">
           <value>
             <set />
           </value>
         </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/email/provider/EmailProvider.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/emailcommon/utility/EmailAsyncTask.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/emailcommon/utility/Utility.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/exchange/service/PingTask.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/mail/browse/ConversationCursor.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/mail/browse/ConversationItemView.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/mail/ui/AbstractActivityController.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/mail/ui/MailboxSelectionActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/mail/ui/SecureConversationViewController.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/mail/utils/RxjavaTask.java">
           <value>
             <set />
           </value>

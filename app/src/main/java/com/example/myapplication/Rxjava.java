@@ -8,7 +8,7 @@ import io.reactivex.schedulers.Schedulers;
 public final class Rxjava {
     public static <T> Observable<T> defaultO(ObservableOnSubscribe<T> observable){
         return Observable
-                .create(observable).subscribeOn(Schedulers.io());
+                .create(observable).observeOn(AndroidSchedulers.mainThread());
     }
 
 }

@@ -11,7 +11,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -49,22 +48,23 @@ public abstract class RxjavaTask<Params, Progress, Result>{
 
     }
 
-    public final void executeOnExecutor(Executor exec,
+    public final RxjavaTask<Params, Progress, Result> executeOnExecutor(Executor exec,
                                         Params... params){
         if (null != innerObservable){
             this.mParams = params;
-            this.innerObservable = this.innerObservable.subscribeOn(Schedulers.from(exec))
-                    .observeOn(AndroidSchedulers.mainThread());
+            this.innerObservable = this.innerObservable.subscribeOn(Schedulers.from(exec));
             subscribeInner();
         }
+        return this;
     }
 
-    public final void execute(Params... params){
+    public final RxjavaTask<Params, Progress, Result> execute(Params... params){
         if (null != innerObservable){
             this.mParams = params;
-            innerObservable = innerObservable.observeOn(AndroidSchedulers.mainThread());
+            this.innerObservable = this.innerObservable.subscribeOn(Schedulers.io());
             subscribeInner();
         }
+        return this;
     }
 
     private void subscribeInner(){
@@ -106,6 +106,7 @@ public abstract class RxjavaTask<Params, Progress, Result>{
 
     protected void onCancelled(Result result){
         mCancelled.set(true);
+        mDisposable.dispose();
         onCancelled();
     }
 
