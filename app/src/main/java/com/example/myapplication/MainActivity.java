@@ -5,6 +5,8 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainActivity extends AppCompatActivity {
@@ -16,39 +18,56 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        AtomicInteger integer = new AtomicInteger();
-        CoroutinePro<String,String,String> co = new CoroutinePro<String,String,String>(){
+//        AtomicInteger integer = new AtomicInteger();
+//        CoroutinePro<String,String,String> co = new CoroutinePro<String,String,String>(){
+//
+//            @Override
+//            protected String doInBackground(String... args) {
+//                while (integer.get() < 10000){
+//                    if (integer.get() == 1000){
+////                        cancel();
+//                    }
+//                    integer.incrementAndGet();
+//                    Log.e(TAG, "doInBackground: i = " + integer.get() + "iscancel? = " + isCancelled());
+//                }
+//                Log.e(TAG, "doInBackground: final");
+//                return "res is " + args[0] + Thread.currentThread().getName();
+//            }
+//
+//            @Override
+//            protected void onPostExecute(String res) {
+//                Log.e(TAG, "onPostExecute: " + res + Thread.currentThread().getName());
+//            }
+//
+//            @Override
+//            protected void onCancelled(String res) {
+//                super.onCancelled(res);
+//                Log.e(TAG, "onCancelled: 1" + res);
+//            }
+//
+//            @Override
+//            protected void onCancelled() {
+//                super.onCancelled();
+//                Log.e(TAG, "onCancelled: 0");
+//            }
+//        }.execute("saaaa");
+//        co.cancel();
+
+        Log.e(TAG, "onCreate: res = " + (0 & 1<<2));
+
+        new CoroutinePro<String,String,String>(){
 
             @Override
             protected String doInBackground(String... args) {
-                while (integer.get() < 10000){
-                    if (integer.get() == 1000){
-//                        cancel();
-                    }
-                    integer.incrementAndGet();
-                    Log.e(TAG, "doInBackground: i = " + integer.get() + "iscancel? = " + isCancelled());
-                }
-                Log.e(TAG, "doInBackground: final");
-                return "res is " + args[0] + Thread.currentThread().getName();
+                return null;
             }
 
             @Override
-            protected void onPostExecute(String res) {
-                Log.e(TAG, "onPostExecute: " + res + Thread.currentThread().getName());
+            protected void onProgressUpdate(@NotNull String[] data) {
+                super.onProgressUpdate(data);
             }
+        }.execute();
 
-            @Override
-            protected void onCancelled(String res) {
-                super.onCancelled(res);
-                Log.e(TAG, "onCancelled: 1" + res);
-            }
 
-            @Override
-            protected void onCancelled() {
-                super.onCancelled();
-                Log.e(TAG, "onCancelled: 0");
-            }
-        }.execute("saaaa");
-        co.cancel();
     }
 }

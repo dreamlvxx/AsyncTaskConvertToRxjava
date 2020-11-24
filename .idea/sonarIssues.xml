@@ -48,6 +48,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/TT.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/TestAS.kt">
           <value>
             <set />
@@ -104,6 +109,11 @@
           </value>
         </entry>
         <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/com/kingsoft/email/rxjava/RxjavaTask.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/AndroidManifest.xml">
           <value>
             <set />
           </value>
@@ -208,7 +218,17 @@
             <set />
           </value>
         </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/mail/browse/SwipeableConversationItemView.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/mail/ui/AbstractActivityController.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/mail/ui/ConversationListFragment.java">
           <value>
             <set />
           </value>
@@ -219,6 +239,11 @@
           </value>
         </entry>
         <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/mail/ui/SecureConversationViewController.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="D:/workspace/Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/mail/ui/recycler/ItemTouchEventDelegate.java">
           <value>
             <set />
           </value>

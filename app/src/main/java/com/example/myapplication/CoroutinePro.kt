@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import android.os.Handler
+import android.os.Looper
 import kotlinx.coroutines.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -41,9 +42,7 @@ private open class StandaloneCoroutineX(
 
 abstract class CoroutinePro<Params, Progress, Result> {
 
-    val handler : Handler? = null
-
-    private val myDispatcher = Executors.newFixedThreadPool(2).asCoroutineDispatcher()
+    private val myDispatcher = Executors.newFixedThreadPool(8).asCoroutineDispatcher()
 
     val fixed = newFixedThreadPoolContext(10, "CoroutinePro")
     val serial = newSingleThreadContext("single")
@@ -105,6 +104,44 @@ abstract class CoroutinePro<Params, Progress, Result> {
         } else {
             return job!!.isCancelled
         }
+    }
+
+    companion object{
+        val PUBLISH_PROGRESS : Int = 999
+    }
+
+
+    val handler : Handler by lazy {
+        Handler(Looper.getMainLooper()){
+            when(it.what){
+                PUBLISH_PROGRESS ->{
+                    val res = it.obj as CoroutinePro<Params, Progress, Result>.ProgressResult<Progress>
+                    res.croinstance.onProgressUpdate(res.indata)
+                }
+                else -> {
+
+                }
+            }
+            false
+        }
+    }
+
+    private inner class ProgressResult<Data>(
+            var croinstance: CoroutinePro<Params,Progress,Result>,
+            vararg data :Data){
+        val indata : Array<Data> = data as Array<Data>
+    }
+
+    protected open fun publishProgress(vararg values : Progress){
+        if(!isCancelled()){
+            handler
+                    .obtainMessage(PUBLISH_PROGRESS,ProgressResult(this, values))
+                    .sendToTarget()
+        }
+    }
+
+    protected open fun onProgressUpdate(data : Array<Progress>){
+
     }
 
 }
