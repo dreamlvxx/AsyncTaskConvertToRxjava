@@ -116,7 +116,7 @@ abstract class CoroutinePro<Params, Progress, Result> {
             when(it.what){
                 PUBLISH_PROGRESS ->{
                     val res = it.obj as CoroutinePro<Params, Progress, Result>.ProgressResult<Progress>
-                    res.croinstance.onProgressUpdate(res.indata)
+                    res.croinstance.onProgressUpdate(*res.data)
                 }
                 else -> {
 
@@ -128,9 +128,7 @@ abstract class CoroutinePro<Params, Progress, Result> {
 
     private inner class ProgressResult<Data>(
             var croinstance: CoroutinePro<Params,Progress,Result>,
-            vararg data :Data){
-        val indata : Array<Data> = data as Array<Data>
-    }
+            val data :Array<Data>)
 
     protected open fun publishProgress(vararg values : Progress){
         if(!isCancelled()){
@@ -140,7 +138,7 @@ abstract class CoroutinePro<Params, Progress, Result> {
         }
     }
 
-    protected open fun onProgressUpdate(data : Array<Progress>){
+    protected open fun onProgressUpdate(vararg values : Progress){
 
     }
 

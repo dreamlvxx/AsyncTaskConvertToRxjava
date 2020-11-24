@@ -53,20 +53,33 @@ public class MainActivity extends AppCompatActivity {
 //        }.execute("saaaa");
 //        co.cancel();
 
-        Log.e(TAG, "onCreate: res = " + (0 & 1<<2));
 
-        new CoroutinePro<String,String,String>(){
+       new CoroutinePro<String,String,String>(){
 
-            @Override
-            protected String doInBackground(String... args) {
-                return null;
-            }
+           @Override
+           protected String doInBackground(String... args) {
+               Log.e(TAG, "doInBackground: thread = " + Thread.currentThread().getName());
+               publishProgress("progress");
+               try {
+                   Thread.sleep(300);
+               } catch (InterruptedException e) {
+                   e.printStackTrace();
+               }
+               return "doInBackground" + args[0];
+           }
 
-            @Override
-            protected void onProgressUpdate(@NotNull String[] data) {
-                super.onProgressUpdate(data);
-            }
-        }.execute();
+           @Override
+           protected void onProgressUpdate(@NotNull String[] data) {
+               super.onProgressUpdate(data);
+               Log.e(TAG, "onProgressUpdate: " + data[0] + "thread = " + Thread.currentThread().getName());
+           }
+
+           @Override
+           protected void onPostExecute(String res) {
+               super.onPostExecute(res);
+               Log.e(TAG, "onPostExecute: " + res + "thread = " + Thread.currentThread().getName());
+           }
+       }.execute("[parma1]");
 
 
     }
