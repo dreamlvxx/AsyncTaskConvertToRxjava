@@ -63,9 +63,10 @@ abstract class CoroutinePro<Params, Progress, Result> {
         return this
     }
 
+    @InternalCoroutinesApi
     fun executeOnExecutor(executors: ExecutorService, vararg args: Params): CoroutinePro<Params, Progress, Result> {
         val coroutineScope = CoroutineScope(Dispatchers.Main)
-        this.job = coroutineScope.launch {
+        this.job = coroutineScope.launchX(func = ::onCancelled) {
             onPreExecute()
             withContext(executors.asCoroutineDispatcher()) {
                 doInBackground(*args)
@@ -98,7 +99,7 @@ abstract class CoroutinePro<Params, Progress, Result> {
         job?.cancel()
     }
 
-    fun isCancelled(): Boolean {
+    private fun isCancelled(): Boolean {
         if (job == null) {
             return true
         } else {
@@ -111,12 +112,12 @@ abstract class CoroutinePro<Params, Progress, Result> {
     }
 
 
-    val handler : Handler by lazy {
+    private val handler : Handler by lazy {
         Handler(Looper.getMainLooper()){
             when(it.what){
                 PUBLISH_PROGRESS ->{
                     val res = it.obj as CoroutinePro<Params, Progress, Result>.ProgressResult<Progress>
-                    res.croinstance.onProgressUpdate(*res.data)
+                    res.coroutinePro.onProgressUpdate(*res.data)
                 }
                 else -> {
 
@@ -127,7 +128,7 @@ abstract class CoroutinePro<Params, Progress, Result> {
     }
 
     private inner class ProgressResult<Data>(
-            var croinstance: CoroutinePro<Params,Progress,Result>,
+            val coroutinePro: CoroutinePro<Params,Progress,Result>,
             val data :Array<Data>)
 
     protected open fun publishProgress(vararg values : Progress){
