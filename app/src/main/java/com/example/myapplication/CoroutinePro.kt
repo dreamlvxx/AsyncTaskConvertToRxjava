@@ -42,31 +42,24 @@ private open class StandaloneCoroutineX(
 
 abstract class CoroutinePro<Params, Progress, Result> {
 
-    private val myDispatcher = Executors.newFixedThreadPool(8).asCoroutineDispatcher()
+    private var job: Job? = null
+    private var coroutineScope: CoroutineScope? = null
 
-    val fixed = newFixedThreadPoolContext(10, "CoroutinePro")
-    val serial = newSingleThreadContext("single")
-    var job: Job? = null
-    var coroutineScope: CoroutineScope? = null
+    companion object{
+        val PUBLISH_PROGRESS : Int = 999
+        private val serial = Executors.newSingleThreadExecutor()
+    }
 
     @InternalCoroutinesApi
-    fun execute(vararg args: Params): CoroutinePro<Params, Progress, Result> {
-        coroutineScope = CoroutineScope(Dispatchers.Main)
-        job = coroutineScope?.launchX(func = ::onCancelled) {
-            onPreExecute()
-            withContext(myDispatcher) {
-                doInBackground(*args)
-            }.let {
-                onPostExecute(it)
-            }
-        }
+    fun execute(vararg args: Params) : CoroutinePro<Params, Progress, Result>{
+        this.executeOnExecutor(serial,*args)
         return this
     }
 
     @InternalCoroutinesApi
     fun executeOnExecutor(executors: ExecutorService, vararg args: Params): CoroutinePro<Params, Progress, Result> {
-        val coroutineScope = CoroutineScope(Dispatchers.Main)
-        this.job = coroutineScope.launchX(func = ::onCancelled) {
+        coroutineScope = CoroutineScope(Dispatchers.Main)
+        this.job = coroutineScope?.launchX(func = ::onCancelled) {
             onPreExecute()
             withContext(executors.asCoroutineDispatcher()) {
                 doInBackground(*args)
@@ -107,9 +100,6 @@ abstract class CoroutinePro<Params, Progress, Result> {
         }
     }
 
-    companion object{
-        val PUBLISH_PROGRESS : Int = 999
-    }
 
 
     private val handler : Handler by lazy {

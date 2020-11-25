@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainActivity extends AppCompatActivity {
@@ -55,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        }.execute("saaaa");
 //        co.cancel();
+
+        Executors.newSingleThreadExecutor();
 
 
        new CoroutinePro<String,String,String>(){
