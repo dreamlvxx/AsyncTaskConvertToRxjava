@@ -2,9 +2,10 @@ package com.example.myapplication
 
 import android.os.Handler
 import android.os.Looper
+import android.os.Process
 import kotlinx.coroutines.*
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import java.util.concurrent.*
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -45,14 +46,49 @@ abstract class CoroutinePro<Params, Progress, Result> {
     private var job: Job? = null
     private var coroutineScope: CoroutineScope? = null
 
+    class CustomThreadPoolFactory(private val namePrefix: String) : ThreadFactory {
+        private val threadNumber = AtomicInteger(1)
+        override fun newThread(r: Runnable): Thread {
+            return BackgroundThread(r, namePrefix + " #" + threadNumber.getAndIncrement())
+        }
+
+        private class BackgroundThread internal constructor(target: Runnable?, name: String) : Thread(target, name) {
+            override fun run() {
+                // By default, the system sets a thread’s priority to the same priority and group memberships as the spawning thread
+                Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND)
+                super.run()
+            }
+        }
+    }
+
     companion object{
+        private val CPU_COUNT = Runtime.getRuntime().availableProcessors()
+        private val POOL_SIZE = CPU_COUNT + 1
+        private val MAX_POOL_SIZE = CPU_COUNT * 2 + 1
+        const val KEEP_ALIVE_TIME = 5L
+        private val KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS
+
+        val DEFAULT_THREAD_POOL_SIZE = POOL_SIZE
         val PUBLISH_PROGRESS : Int = 999
-        private val serial = Executors.newSingleThreadExecutor()
+        //单线程执行
+        @JvmField
+        val SERIAL_EXECUTOR: ExecutorService = Executors.newSingleThreadExecutor()
+        //默认单线程执行
+        private var sDefaultExecutor = SERIAL_EXECUTOR
+        //多任务执行
+        @JvmField
+        val THREAD_POOL_EXECUTOR = ThreadPoolExecutor(POOL_SIZE, MAX_POOL_SIZE, KEEP_ALIVE_TIME,
+                KEEP_ALIVE_TIME_UNIT, LinkedBlockingQueue(128), CustomThreadPoolFactory("SyncThreadPool"), ThreadPoolExecutor.DiscardPolicy())
+
+        @JvmStatic
+        fun setDefaultExecutor(exec : ExecutorService){
+            sDefaultExecutor = exec
+        }
     }
 
     @InternalCoroutinesApi
     fun execute(vararg args: Params) : CoroutinePro<Params, Progress, Result>{
-        this.executeOnExecutor(serial,*args)
+        this.executeOnExecutor(sDefaultExecutor,*args)
         return this
     }
 
@@ -62,7 +98,14 @@ abstract class CoroutinePro<Params, Progress, Result> {
         this.job = coroutineScope?.launchX(func = ::onCancelled) {
             onPreExecute()
             withContext(executors.asCoroutineDispatcher()) {
-                doInBackground(*args)
+                var res : Result? = null
+                try {
+                    ensureActive()
+                    res = doInBackground(*args)
+                }catch (e : Exception){
+                    onError(e)
+                }
+                res
             }.let {
                 onPostExecute(it)
             }
@@ -72,7 +115,7 @@ abstract class CoroutinePro<Params, Progress, Result> {
 
     protected abstract fun doInBackground(vararg args: Params): Result
 
-    protected open fun onPostExecute(res: Result) {
+    protected open fun onPostExecute(res: Result?) {
 
     }
 
@@ -80,11 +123,15 @@ abstract class CoroutinePro<Params, Progress, Result> {
 
     }
 
-    protected open fun onCancelled(res: Result?) {
+    protected open fun onCancelled(res: Result) {
         onCancelled()
     }
 
     protected open fun onCancelled() {
+
+    }
+
+    protected open fun onError(e : Exception){
 
     }
 
@@ -107,7 +154,7 @@ abstract class CoroutinePro<Params, Progress, Result> {
             when(it.what){
                 PUBLISH_PROGRESS ->{
                     val res = it.obj as CoroutinePro<Params, Progress, Result>.ProgressResult<Progress>
-                    res.coroutinePro.onProgressUpdate(*res.data)
+                    onProgressUpdate(*res.data)
                 }
                 else -> {
 
