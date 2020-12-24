@@ -21,8 +21,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        System.out.println("11");
-        System.out.println("22");
+        System.out.println("a");
 
 //        AtomicInteger integer = new AtomicInteger();
 //        CoroutinePro<String,String,String> co = new CoroutinePro<String,String,String>(){
