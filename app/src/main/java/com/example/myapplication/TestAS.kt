@@ -9,5 +9,6 @@ fun test(){
 fun getmess(mess :String,ssss :() -> Unit,sss :String){
     Log.e("xxx", "getmess: ")
     ssss.invoke()
+    Log.e("sadads","sad")
 
 }
