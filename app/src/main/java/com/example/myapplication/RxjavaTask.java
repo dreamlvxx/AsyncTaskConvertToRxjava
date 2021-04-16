@@ -29,6 +29,7 @@ public abstract class RxjavaTask<Params, Progress, Result>{
     public RxjavaTask() {
         sHandler = new InternalHandler(Looper.getMainLooper());
         init();
+        Log.e(TAG, "RxjavaTask: ");
     }
 
     private void init(){
