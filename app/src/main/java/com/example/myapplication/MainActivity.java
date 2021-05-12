@@ -1,28 +1,10 @@
 package com.example.myapplication;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static com.example.myapplication.CoroutinePro.SERIAL_EXECUTOR;
-import static com.example.myapplication.CoroutinePro.THREAD_POOL_EXECUTOR;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -139,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        CoroutineUtils.submit(new CorouRunnable<String>() {
+        CoroutineUtils.submitWithCallback(new CorouRunnable<String>() {
             @Override
             public String call() throws Exception {
                 Thread.sleep(5000);
