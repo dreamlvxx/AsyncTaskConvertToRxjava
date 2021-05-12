@@ -138,5 +138,30 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        CoroutineUtils.submit(new CorouRunnable<String>() {
+            @Override
+            public String call() throws Exception {
+                Thread.sleep(5000);
+                return "9999999";
+            }
+        }, new CoroutineUtils.Callback<String>() {
+            @Override
+            public void onFinish(String res) {
+                Log.e("xxx", "onFinish: " + res);
+            }
+
+            @Override
+            public void onError() {
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+
+        Log.e("xxx", "onCreate: after method");
     }
 }

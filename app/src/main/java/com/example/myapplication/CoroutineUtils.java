@@ -4,19 +4,29 @@ import android.util.Log;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.example.myapplication.CoroutinePro.SERIAL_EXECUTOR;
-import static com.example.myapplication.CoroutinePro.THREAD_POOL_EXECUTOR;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.FutureTask;
 
 public class CoroutineUtils {
-
-    public static CoroutinePro submit(CorouRunnable runnable, Callback callback) {
-        CoroutinePro innerCorou = new CoroutinePro<String, String, String>() {
+    public static <T> CoroutinePro submit(CorouRunnable<T> runnable, Callback<T> callback) {
+        CoroutinePro innerCorou = new CoroutinePro<String, String, T>() {
 
             @Override
-            protected String doInBackground(String... args) {
+            protected T doInBackground(String... args) {
                 Log.e("xxx", String.format("start doInBackground: on Thread [%s]", Thread.currentThread().getName()));
-                runnable.run();
-                return String.format("runnable finish task tag = [%s]on thread [%s]", args[0], Thread.currentThread().getName());
+//                runnable.run();
+                FutureTask<T> futureTask = new FutureTask<>(runnable);
+                futureTask.run();
+                try {
+                    return futureTask.get();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return null;
             }
 
             @Override
@@ -25,10 +35,10 @@ public class CoroutineUtils {
             }
 
             @Override
-            protected void onPostExecute(String res) {
+            protected void onPostExecute(T res) {
                 super.onPostExecute(res);
-                callback.onFinish();
                 Log.e("xxx", String.format("receive res on thread [%s],res = %s", Thread.currentThread().getName(), res));
+                callback.onFinish(res);
             }
 
             @Override
@@ -46,8 +56,8 @@ public class CoroutineUtils {
         return innerCorou;
     }
 
-    public interface Callback {
-        void onFinish();
+    public interface Callback<T> {
+        void onFinish(T res);
 
         void onError();
 
