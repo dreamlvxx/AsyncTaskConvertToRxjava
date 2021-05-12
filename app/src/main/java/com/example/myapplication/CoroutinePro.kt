@@ -11,14 +11,15 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 
 val TAG = "CoroutinePro"
+
 @InternalCoroutinesApi
 fun CoroutineScope.launchX(
-        func : ()->Unit,
+        func: () -> Unit,
         context: CoroutineContext = EmptyCoroutineContext,
         block: suspend CoroutineScope.() -> Unit,
 ): Job {
     val newContext = newCoroutineContext(context)
-    val coroutine = StandaloneCoroutineX(onCancelFunc = func,parentContext = newContext, active = true)
+    val coroutine = StandaloneCoroutineX(onCancelFunc = func, parentContext = newContext, active = true)
     coroutine.start(CoroutineStart.DEFAULT, coroutine, block)
     return coroutine
 }
@@ -52,7 +53,7 @@ abstract class CoroutinePro<Params, Progress, Result> {
             return BackgroundThread(r, namePrefix + " #" + threadNumber.getAndIncrement())
         }
 
-        private class BackgroundThread internal constructor(target: Runnable?, name: String) : Thread(target, name) {
+        private class BackgroundThread(target: Runnable?, name: String) : Thread(target, name) {
             override fun run() {
                 // By default, the system sets a thread’s priority to the same priority and group memberships as the spawning thread
                 Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND)
@@ -61,7 +62,7 @@ abstract class CoroutinePro<Params, Progress, Result> {
         }
     }
 
-    companion object{
+    companion object {
         private val CPU_COUNT = Runtime.getRuntime().availableProcessors()
         private val POOL_SIZE = CPU_COUNT + 1
         private val MAX_POOL_SIZE = CPU_COUNT * 2 + 1
@@ -69,26 +70,32 @@ abstract class CoroutinePro<Params, Progress, Result> {
         private val KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS
 
         val DEFAULT_THREAD_POOL_SIZE = POOL_SIZE
-        val PUBLISH_PROGRESS : Int = 999
+        val PUBLISH_PROGRESS: Int = 999
+
         //单线程执行
         @JvmField
         val SERIAL_EXECUTOR: ExecutorService = Executors.newSingleThreadExecutor()
-        //默认单线程执行
-        private var sDefaultExecutor = SERIAL_EXECUTOR
+
         //多任务执行
         @JvmField
-        val THREAD_POOL_EXECUTOR = ThreadPoolExecutor(POOL_SIZE, MAX_POOL_SIZE, KEEP_ALIVE_TIME,
+        val THREAD_POOL_EXECUTOR: ExecutorService = ThreadPoolExecutor(POOL_SIZE, MAX_POOL_SIZE, KEEP_ALIVE_TIME,
                 KEEP_ALIVE_TIME_UNIT, LinkedBlockingQueue(128), CustomThreadPoolFactory("SyncThreadPool"), ThreadPoolExecutor.DiscardPolicy())
 
+        //默认单线程执行
+        private var sDefaultExecutor = THREAD_POOL_EXECUTOR
+
+        @JvmField
+        var defaultIO = Dispatchers.IO
+
         @JvmStatic
-        fun setDefaultExecutor(exec : ExecutorService){
+        fun setDefaultExecutor(exec: ExecutorService) {
             sDefaultExecutor = exec
         }
     }
 
     @InternalCoroutinesApi
-    fun execute(vararg args: Params) : CoroutinePro<Params, Progress, Result>{
-        this.executeOnExecutor(sDefaultExecutor,*args)
+    fun execute(vararg args: Params): CoroutinePro<Params, Progress, Result> {
+        this.executeOnExecutor(sDefaultExecutor, *args)
         return this
     }
 
@@ -98,11 +105,11 @@ abstract class CoroutinePro<Params, Progress, Result> {
         this.job = coroutineScope?.launchX(func = ::onCancelled) {
             onPreExecute()
             withContext(executors.asCoroutineDispatcher()) {
-                var res : Result? = null
+                var res: Result? = null
                 try {
                     ensureActive()
                     res = doInBackground(*args)
-                }catch (e : Exception){
+                } catch (e: Exception) {
                     onError(e)
                 }
                 res
@@ -112,6 +119,28 @@ abstract class CoroutinePro<Params, Progress, Result> {
         }
         return this
     }
+
+    @InternalCoroutinesApi
+    fun executeOnIO(vararg args: Params): CoroutinePro<Params, Progress, Result> {
+        coroutineScope = CoroutineScope(Dispatchers.Main)
+        this.job = coroutineScope?.launchX(func = ::onCancelled) {
+            onPreExecute()
+            withContext(Dispatchers.IO) {
+                var res: Result? = null
+                try {
+                    ensureActive()
+                    res = doInBackground(*args)
+                } catch (e: Exception) {
+                    onError(e)
+                }
+                res
+            }.let {
+                onPostExecute(it)
+            }
+        }
+        return this
+    }
+
 
     protected abstract fun doInBackground(vararg args: Params): Result
 
@@ -131,7 +160,7 @@ abstract class CoroutinePro<Params, Progress, Result> {
 
     }
 
-    protected open fun onError(e : Exception){
+    protected open fun onError(e: Exception) {
 
     }
 
@@ -148,11 +177,10 @@ abstract class CoroutinePro<Params, Progress, Result> {
     }
 
 
-
-    private val handler : Handler by lazy {
-        Handler(Looper.getMainLooper()){
-            when(it.what){
-                PUBLISH_PROGRESS ->{
+    private val handler: Handler by lazy {
+        Handler(Looper.getMainLooper()) {
+            when (it.what) {
+                PUBLISH_PROGRESS -> {
                     val res = it.obj as CoroutinePro<Params, Progress, Result>.ProgressResult<Progress>
                     onProgressUpdate(*res.data)
                 }
@@ -165,18 +193,18 @@ abstract class CoroutinePro<Params, Progress, Result> {
     }
 
     private inner class ProgressResult<Data>(
-            val coroutinePro: CoroutinePro<Params,Progress,Result>,
-            val data :Array<Data>)
+            val coroutinePro: CoroutinePro<Params, Progress, Result>,
+            val data: Array<Data>)
 
-    protected open fun publishProgress(vararg values : Progress){
-        if(!isCancelled()){
+    protected open fun publishProgress(vararg values: Progress) {
+        if (!isCancelled()) {
             handler
-                    .obtainMessage(PUBLISH_PROGRESS,ProgressResult(this, values))
+                    .obtainMessage(PUBLISH_PROGRESS, ProgressResult(this, values))
                     .sendToTarget()
         }
     }
 
-    protected open fun onProgressUpdate(vararg values : Progress){
+    protected open fun onProgressUpdate(vararg values: Progress) {
 
     }
 
