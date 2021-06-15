@@ -8,6 +8,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.3.0/23a4e24d487cf4838494193e8bbf52f332006557/kotlinx-coroutines-core-1.3.0-sources.jar!/commonMain/Builders.common.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../../Emial_Oppo/email/AndroidMail/src/com/kingsoft/advertisement/AdvertisementUtils.java">
           <value>
             <set />
@@ -143,6 +148,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../../Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/email2/ui/MailActivityEmail.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../../Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/emailcommon/utility/EmailAsyncTask.java">
           <value>
             <set />
@@ -183,12 +193,22 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../../Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/mail/content/ThreadSafeCursorWrapper.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../../Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/mail/ui/AbstractActivityController.java">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/../../Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/mail/ui/ConversationListFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/mail/ui/FolderListFragment.java">
           <value>
             <set />
           </value>
@@ -214,6 +234,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/../../Emial_Oppo/email/AndroidMail/src/main/java/com/kingsoft/mail/utils/Utils.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../../Emial_Oppo/email/AndroidMail/src/main/java/com/wps/multiwindow/detailcontent/ConversationPagerAdapter.java">
           <value>
             <set />
           </value>
@@ -263,7 +288,17 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/CoroutineUtils.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/MainActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/MyCor.kt">
           <value>
             <set />
           </value>

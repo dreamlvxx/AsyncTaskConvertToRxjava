@@ -142,7 +142,7 @@ abstract class CoroutinePro<Params, Progress, Result> {
     }
 
 
-    protected abstract fun doInBackground(vararg args: Params): Result
+    protected abstract fun doInBackground(vararg args: Params): Result?
 
     protected open fun onPostExecute(res: Result?) {
 

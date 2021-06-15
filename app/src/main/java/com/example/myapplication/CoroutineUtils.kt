@@ -1,108 +1,103 @@
-package com.example.myapplication;
+package com.example.myapplication
 
-import android.util.Log;
+import android.util.Log
+import kotlinx.coroutines.*
+import java.lang.Runnable
+import java.util.concurrent.Callable
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.FutureTask
 
-import org.jetbrains.annotations.NotNull;
+object CoroutineUtils {
+    //用于承接上下逻辑，把一些耗时操作放在background
+    @JvmStatic
+    fun <R> waitAndExcuAsyncDefault(runnable: Callable<R>){
+        runBlocking {
+            async(Dispatchers.IO) {
+                val futureTask = FutureTask(runnable)
+                futureTask.run()
+                return@async futureTask.get() as R
+            }
+        }
+    }
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.FutureTask;
+    @JvmStatic
+    fun <R,T> waitAndExcuAsync(runnable: Callable<R>,after : (R) -> T){
+        runBlocking {
+            val str = async(Dispatchers.IO) {
+                val futureTask = FutureTask(runnable)
+                futureTask.run()
+                return@async futureTask.get() as R
+            }
+            after(str.await())
+        }
+    }
 
-public class CoroutineUtils {
-    public static <T> CoroutinePro submitWithCallback(CorouRunnable<T> runnable, Callback<T> callback) {
-        CoroutinePro innerCorou = new CoroutinePro<String, String, T>() {
 
-            @Override
-            protected T doInBackground(String... args) {
-                Log.e("xxx", String.format("start doInBackground: on Thread [%s]", Thread.currentThread().getName()));
-                FutureTask<T> futureTask = new FutureTask<>(runnable);
-                futureTask.run();
+    @InternalCoroutinesApi
+    @JvmStatic
+    fun <T> submitWithCallback(runnable: CorouRunnable<T>, callback: Callback<T?>): CoroutinePro<*, *, *> {
+        return object : CoroutinePro<String?, String?, T>() {
+            override fun doInBackground(vararg args: String?): T? {
+                Log.e("xxx", String.format("start doInBackground: on Thread [%s]", Thread.currentThread().name))
+                val futureTask = FutureTask(runnable)
+                futureTask.run()
                 try {
-                    return futureTask.get();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    return futureTask.get()
+                } catch (e: ExecutionException) {
+                    e.printStackTrace()
+                } catch (e: InterruptedException) {
+                    e.printStackTrace()
                 }
-                return null;
+                return null
             }
 
-            @Override
-            protected void onProgressUpdate(@NotNull String[] data) {
-                super.onProgressUpdate(data);
+            override fun onPostExecute(res: T?) {
+                super.onPostExecute(res)
+                Log.e("xxx", String.format("receive res on thread [%s],res = %s", Thread.currentThread().name, res))
+                callback.onFinish(res)
             }
 
-            @Override
-            protected void onPostExecute(T res) {
-                super.onPostExecute(res);
-                Log.e("xxx", String.format("receive res on thread [%s],res = %s", Thread.currentThread().getName(), res));
-                callback.onFinish(res);
+            override fun onCancelled() {
+                super.onCancelled()
+                callback.onCancel()
             }
 
-            @Override
-            protected void onCancelled() {
-                super.onCancelled();
-                callback.onCancel();
+            override fun onError(e: Exception) {
+                super.onError(e)
+                callback.onError()
             }
-
-            @Override
-            protected void onError(@NotNull Exception e) {
-                super.onError(e);
-                callback.onError();
-            }
-        }.executeOnIO(runnable.getTag());
-        return innerCorou;
+        }.executeOnIO(runnable.tag)
     }
 
-    public static <T> CoroutinePro submit(CorouRunnable<T> runnable) {
-        CoroutinePro innerCorou = new CoroutinePro<String, String, T>() {
-            @Override
-            protected T doInBackground(String... args) {
-                Log.e("xxx", String.format("start doInBackground: on Thread [%s]", Thread.currentThread().getName()));
-                FutureTask<T> futureTask = new FutureTask<>(runnable);
-                futureTask.run();
+    @InternalCoroutinesApi
+    @JvmStatic
+    fun <T> submit(runnable: CorouRunnable<T>): CoroutinePro<*, *, *> {
+        return object : CoroutinePro<String?, String?, T>() {
+            override fun doInBackground(vararg args: String?): T? {
+                Log.e("xxx", String.format("start doInBackground: on Thread [%s]", Thread.currentThread().name))
+                val futureTask = FutureTask(runnable)
+                futureTask.run()
                 try {
-                    return futureTask.get();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    return futureTask.get()
+                } catch (e: ExecutionException) {
+                    e.printStackTrace()
+                } catch (e: InterruptedException) {
+                    e.printStackTrace()
                 }
-                return null;
+                return null
             }
 
-            @Override
-            protected void onProgressUpdate(@NotNull String[] data) {
-                super.onProgressUpdate(data);
+            override fun onPostExecute(res: T?) {
+                super.onPostExecute(res)
+                Log.e("xxx", String.format("receive res on thread [%s],res = %s", Thread.currentThread().name, res))
             }
 
-            @Override
-            protected void onPostExecute(T res) {
-                super.onPostExecute(res);
-                Log.e("xxx", String.format("receive res on thread [%s],res = %s", Thread.currentThread().getName(), res));
-            }
-
-            @Override
-            protected void onCancelled() {
-                super.onCancelled();
-            }
-
-            @Override
-            protected void onError(@NotNull Exception e) {
-                super.onError(e);
-            }
-        }.executeOnIO(runnable.getTag());
-        return innerCorou;
+        }.executeOnIO(runnable.tag)
     }
 
-
-    public interface Callback<T> {
-        void onFinish(T res);
-
-        void onError();
-
-        void onCancel();
+    interface Callback<T> {
+        fun onFinish(res: T)
+        fun onError()
+        fun onCancel()
     }
-
 }

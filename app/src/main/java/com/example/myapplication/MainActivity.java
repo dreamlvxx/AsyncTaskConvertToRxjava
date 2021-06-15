@@ -6,6 +6,13 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.concurrent.Callable;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
+import kotlin.jvm.internal.FunctionImpl;
+import kotlinx.coroutines.GlobalScope;
+
 public class MainActivity extends AppCompatActivity {
 
     private final static String TAG = "xxx";
@@ -76,74 +83,68 @@ public class MainActivity extends AppCompatActivity {
 //               Log.e(TAG, "onPostExecute: " + res + "thread = " + Thread.currentThread().getName());
 //           }
 //       }.executeOnExecutor(SERIAL_EXECUTOR,"[parma1]");
-
+        Log.e(TAG, "onCreate: start" );
+        CoroutineUtils.waitAndExcuAsyncDefault(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                Log.e(TAG, "call: int t = " + Thread.currentThread().getName());
+                Thread.sleep(20000);
+                return "mai sre res +-=";
+            }
+        });
+        Log.e(TAG, "onCreate: after");
 //        for (int i = 0; i < 100; i++) {
 //            final int val = i;
-//            CoroutineUtils.submit(new CorouRunnable(String.valueOf(i)) {
+//            CoroutineUtils.submit(new CorouRunnable<String>() {
 //                @Override
-//                public void run() {
+//                public String call() throws Exception {
 //                    try {
+//                        Log.e(TAG, "onClick: ");
 //                        Thread.sleep(1000);
 //                    } catch (InterruptedException e) {
 //                        e.printStackTrace();
 //                    }
-//                }
-//            }, new CoroutineUtils.Callback() {
-//                @Override
-//                public void onFinish() {
-//
-//                }
-//
-//                @Override
-//                public void onError() {
-//
-//                }
-//
-//                @Override
-//                public void onCancel() {
-//
+//                    return "return res";
 //                }
 //            });
 //        }
-
+//
 //        Log.e(TAG, "onCreate: start get res");
-//        List<String> res= getres();
-//        Log.e(TAG, "onCreate: finish getres" + res.toString());
-        findViewById(R.id.tv).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    Log.e(TAG, "onClick: ");
-                    Thread.sleep(1000000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        CoroutineUtils.submitWithCallback(new CorouRunnable<String>() {
-            @Override
-            public String call() throws Exception {
-                Thread.sleep(5000);
-                return "9999999";
-            }
-        }, new CoroutineUtils.Callback<String>() {
-            @Override
-            public void onFinish(String res) {
-                Log.e("xxx", "onFinish: " + res);
-            }
-
-            @Override
-            public void onError() {
-
-            }
-
-            @Override
-            public void onCancel() {
-
-            }
-        });
-
-        Log.e("xxx", "onCreate: after method");
+//        findViewById(R.id.tv).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                try {
+//                    Log.e(TAG, "onClick: ");
+//                    Thread.sleep(1000000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//
+//        CoroutineUtils.submitWithCallback(new CorouRunnable<String>() {
+//            @Override
+//            public String call() throws Exception {
+//                Thread.sleep(5000);
+//                return "9999999";
+//            }
+//        }, new CoroutineUtils.Callback<String>() {
+//            @Override
+//            public void onFinish(String res) {
+//                Log.e("xxx", "onFinish: " + res);
+//            }
+//
+//            @Override
+//            public void onError() {
+//
+//            }
+//
+//            @Override
+//            public void onCancel() {
+//
+//            }
+//        });
+//
+//        Log.e("xxx", "onCreate: after method");
     }
 }
