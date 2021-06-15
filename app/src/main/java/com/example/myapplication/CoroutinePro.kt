@@ -168,7 +168,7 @@ abstract class CoroutinePro<Params, Progress, Result> {
         job?.cancel()
     }
 
-    private fun isCancelled(): Boolean {
+    fun isCancelled(): Boolean {
         if (job == null) {
             return true
         } else {

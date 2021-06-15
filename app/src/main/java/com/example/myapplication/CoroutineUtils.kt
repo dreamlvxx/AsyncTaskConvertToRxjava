@@ -10,13 +10,12 @@ import java.util.concurrent.FutureTask
 object CoroutineUtils {
     //用于承接上下逻辑，把一些耗时操作放在background
     @JvmStatic
-    fun <R> waitAndExcuAsyncDefault(runnable: Callable<R>){
-        runBlocking {
-            async(Dispatchers.IO) {
-                val futureTask = FutureTask(runnable)
-                futureTask.run()
-                return@async futureTask.get() as R
+    fun waitAndExcuAsyncDefault(prefunc : () -> Unit,nextFunc : () -> Unit){
+        GlobalScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.IO){
+                prefunc()
             }
+            nextFunc()
         }
     }
 
