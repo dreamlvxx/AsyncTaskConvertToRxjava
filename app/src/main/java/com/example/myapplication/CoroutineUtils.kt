@@ -8,29 +8,50 @@ import java.util.concurrent.ExecutionException
 import java.util.concurrent.FutureTask
 
 object CoroutineUtils {
-    //用于承接上下逻辑，把一些耗时操作放在background
+    /**
+     *  用于承接上下逻辑，把一些耗时操作放在background,
+     *  替换回调的写法
+     */
     @JvmStatic
-    fun waitAndExcuAsyncDefault(prefunc : () -> Unit,nextFunc : () -> Unit){
+    fun <R> waitAndExcuAsyncDefault(prefunc: () -> R, nextFunc: (R?) -> Unit) {
         GlobalScope.launch(Dispatchers.Main) {
-            withContext(Dispatchers.IO){
-                prefunc()
+            var result: R? = null
+            withContext(Dispatchers.IO) {
+                try {
+                    result = prefunc()
+                } catch (e: Exception) {
+
+                }
+                result
             }
-            nextFunc()
+            nextFunc(result)
         }
     }
 
     @JvmStatic
-    fun <R,T> waitAndExcuAsync(runnable: Callable<R>,after : (R) -> T){
-        runBlocking {
-            val str = async(Dispatchers.IO) {
-                val futureTask = FutureTask(runnable)
-                futureTask.run()
-                return@async futureTask.get() as R
-            }
-            after(str.await())
+    fun <T> excuOnIO(callable: Callable<T>) {
+        val scope = CoroutineScope(Dispatchers.IO)
+        scope.launch {
+            callable.call()
         }
     }
 
+    @JvmStatic
+    fun <T> excuOnIOWithCallback(callable: Callable<T>,callback : Callback<T>) {
+        val scope = CoroutineScope(Dispatchers.Main)
+        scope.launch {
+            var result : T? = null
+            withContext(Dispatchers.IO){
+                try {
+                    result = callable.call()
+                }catch (e : Exception){
+                    callback.onError(e.message)
+                }
+                result
+            }
+            callback.onFinish(result)
+        }
+    }
 
     @InternalCoroutinesApi
     @JvmStatic
@@ -63,7 +84,7 @@ object CoroutineUtils {
 
             override fun onError(e: Exception) {
                 super.onError(e)
-                callback.onError()
+                callback.onError(e.message)
             }
         }.executeOnIO(runnable.tag)
     }
@@ -95,8 +116,8 @@ object CoroutineUtils {
     }
 
     interface Callback<T> {
-        fun onFinish(res: T)
-        fun onError()
+        fun onFinish(res: T?)
+        fun onError(mes : String?)
         fun onCancel()
     }
 }

@@ -6,6 +6,8 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -19,7 +21,7 @@ import kotlinx.coroutines.GlobalScope;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final static String TAG = "xxx";
+    private final static String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +30,69 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.tv).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doManyTasks();
+//                doManyTasks();
+//                doBridge();
+//                doIOtask();
+                doIOTaskWithCallback();
             }
         });
+    }
+
+    private void doIOtask(){
+        CoroutineUtils.excuOnIO(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                Log.e(TAG, "call: start" + Thread.currentThread().getName());
+                Thread.sleep(3000);
+                Log.e(TAG, "call: finish" + Thread.currentThread().getName());
+                return null;
+            }
+        });
+    }
+
+    private void doIOTaskWithCallback(){
+        CoroutineUtils.excuOnIOWithCallback(new CorouRunnable<String>() {
+            @Override
+            public String call() throws Exception {
+                Log.e(TAG, "doIOTaskWithCallback: start" + Thread.currentThread().getName());
+                Thread.sleep(3000);
+                Log.e(TAG, "doIOTaskWithCallback: finish" + Thread.currentThread().getName());
+                return "doIOTaskWithCallback-result";
+            }
+        }, new CoroutineUtils.Callback<String>() {
+            @Override
+            public void onFinish(@Nullable String res) {
+                Log.e(TAG, "doIOTaskWithCallback: result = " + res + Thread.currentThread().getName());
+            }
+
+            @Override
+            public void onError(@Nullable String mes) {
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+    }
+
+    private void doBridge(){
+        Log.e(TAG, "doBridge: start");
+        CoroutineUtils.waitAndExcuAsyncDefault(new Function0<String>() {
+            @Override
+            public String invoke() {
+                Log.e(TAG, "invoke: pre method excu in t = " + Thread.currentThread().getName());
+                return "this is res bridge";
+            }
+        }, new Function1<String, Unit>() {
+            @Override
+            public Unit invoke(String s) {
+                Log.e(TAG, "invoke: result" + s + "t = " + Thread.currentThread().getName());
+                return null;
+            }
+        });
+        Log.e(TAG, "doBridge: after");
     }
 
     private void doManyTasks(){
