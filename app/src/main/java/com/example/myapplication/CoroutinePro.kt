@@ -10,6 +10,11 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 
+/**
+ * 用于替换asynctask
+ * 可publish progress
+ */
+
 val TAG = "CoroutinePro"
 
 @InternalCoroutinesApi
@@ -90,6 +95,21 @@ abstract class CoroutinePro<Params, Progress, Result> {
         @JvmStatic
         fun setDefaultExecutor(exec: ExecutorService) {
             sDefaultExecutor = exec
+        }
+
+        private val handler: Handler by lazy {
+            Handler(Looper.getMainLooper()) {
+                when (it.what) {
+                    PUBLISH_PROGRESS -> {
+                        val res = it.obj as CoroutinePro<Any, Any, Any>.ProgressResult<Any>
+                        res.coroutinePro.onProgressUpdate(*res.data)
+                    }
+                    else -> {
+
+                    }
+                }
+                false
+            }
         }
     }
 
@@ -173,22 +193,6 @@ abstract class CoroutinePro<Params, Progress, Result> {
             return true
         } else {
             return job!!.isCancelled
-        }
-    }
-
-
-    private val handler: Handler by lazy {
-        Handler(Looper.getMainLooper()) {
-            when (it.what) {
-                PUBLISH_PROGRESS -> {
-                    val res = it.obj as CoroutinePro<Params, Progress, Result>.ProgressResult<Progress>
-                    onProgressUpdate(*res.data)
-                }
-                else -> {
-
-                }
-            }
-            false
         }
     }
 

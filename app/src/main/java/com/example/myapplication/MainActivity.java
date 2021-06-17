@@ -34,12 +34,44 @@ public class MainActivity extends AppCompatActivity {
 //                doBridge();
 //                doIOtask();
 //                doIOTaskWithCallback();
-                TestAS.Companion.doMes();
+//                TestAS.Companion.doMes();
+                testCorouPro();
             }
         });
     }
 
-    private void doIOtask(){
+    private void testCorouPro() {
+        new CoroutinePro<String, String, String>() {
+
+            @Nullable
+            @Override
+            protected String doInBackground(String... args) {
+                try {
+                    Log.e(TAG, "doInBackground: " + " t = " + Thread.currentThread().getName());
+                    Thread.sleep(1000);
+                    publishProgress("asddsa");
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return "testCorouPro";
+            }
+
+            @Override
+            protected void onProgressUpdate(String... values) {
+                super.onProgressUpdate(values);
+                Log.e(TAG, "onProgressUpdate: '" + values[0] + " t = " + Thread.currentThread().getName());
+            }
+
+            @Override
+            protected void onPostExecute(@Nullable String res) {
+                super.onPostExecute(res);
+                Log.e(TAG, "onPostExecute: " + res + " t = " + Thread.currentThread().getName());
+            }
+        }.executeOnIO();
+    }
+
+    private void doIOtask() {
         CoroutineUtils.excuOnIO(new CorouRunnable<String>("doIOtask") {
             @Override
             public String call() throws Exception {
@@ -51,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void doIOTaskWithCallback(){
+    private void doIOTaskWithCallback() {
         CoroutineUtils.excuOnIOWithCallback(new CorouRunnable<String>("doIOTaskWithCallback") {
             @Override
             public String call() throws Exception {
@@ -78,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void doBridge(){
+    private void doBridge() {
         Log.e(TAG, "doBridge: start");
         CoroutineUtils.waitAndExcuAsyncDefault(new Function0<String>() {
             @Override
@@ -96,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         Log.e(TAG, "doBridge: after");
     }
 
-    private void doManyTasks(){
+    private void doManyTasks() {
         CoroutineUtils.submit(new CorouRunnable<String>() {
             @Override
             public String call() throws Exception {
@@ -120,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void docancel(){
+    private void docancel() {
         AtomicInteger integer = new AtomicInteger();
         CoroutinePro<String, String, String> co = new CoroutinePro<String, String, String>() {
 
