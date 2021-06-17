@@ -33,13 +33,14 @@ public class MainActivity extends AppCompatActivity {
 //                doManyTasks();
 //                doBridge();
 //                doIOtask();
-                doIOTaskWithCallback();
+//                doIOTaskWithCallback();
+                TestAS.Companion.doMes();
             }
         });
     }
 
     private void doIOtask(){
-        CoroutineUtils.excuOnIO(new Callable<String>() {
+        CoroutineUtils.excuOnIO(new CorouRunnable<String>("doIOtask") {
             @Override
             public String call() throws Exception {
                 Log.e(TAG, "call: start" + Thread.currentThread().getName());
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void doIOTaskWithCallback(){
-        CoroutineUtils.excuOnIOWithCallback(new CorouRunnable<String>() {
+        CoroutineUtils.excuOnIOWithCallback(new CorouRunnable<String>("doIOTaskWithCallback") {
             @Override
             public String call() throws Exception {
                 Log.e(TAG, "doIOTaskWithCallback: start" + Thread.currentThread().getName());

@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import android.util.Log
+import java.util.concurrent.Callable
 import kotlin.reflect.KProperty
 
 fun test(){
@@ -8,11 +9,41 @@ fun test(){
 }
 
 fun main() {
-    val ImpdBa = BainImpl()
-    val BaHasDelgate = BaHasDelgate(ImpdBa)
-    BaHasDelgate.extraMathod()
-    BaHasDelgate.printX()
+//    val ImpdBa = BainImpl()
+//    val BaHasDelgate = BaHasDelgate(ImpdBa)
+//    BaHasDelgate.extraMathod()
+//    BaHasDelgate.printX()
+//    CoroutineUtils.excuOnIO(object : Callable<String> {
+//        override fun call(): String {
+//
+//            return ""
+//        }
+//    })
 }
+
+class TestAS {
+    companion object{
+
+        @JvmStatic
+        fun doMes(){
+            CoroutineUtils.waitAndExcuAsyncDefault({
+                bacFunc()
+            },{
+                maiFunc(it)
+            })
+        }
+
+        fun bacFunc() :String{
+            return "bacFunc res"
+        }
+
+        fun maiFunc(s :String?){
+            Log.e(TAG, "maiFunc: " + s)
+        }
+    }
+}
+
+
 
 interface BaIn{
     fun printX()

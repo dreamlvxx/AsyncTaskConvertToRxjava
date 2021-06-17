@@ -2,47 +2,50 @@ package com.example.myapplication
 
 import android.util.Log
 import kotlinx.coroutines.*
-import java.lang.Runnable
-import java.util.concurrent.Callable
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.FutureTask
 
 object CoroutineUtils {
+
+    val tag = "CoroutineUtils"
     /**
-     *  用于承接上下逻辑，把一些耗时操作放在background,
-     *  替换回调的写法
+     *  替换回调的写法,异步执行，回调处理
      */
     @JvmStatic
-    fun <R> waitAndExcuAsyncDefault(prefunc: () -> R, nextFunc: (R?) -> Unit) {
+    fun <R> waitAndExcuAsyncDefault(backgroundFunc: () -> R, mainFunc: (R?) -> Unit) {
         GlobalScope.launch(Dispatchers.Main) {
             var result: R? = null
             withContext(Dispatchers.IO) {
                 try {
-                    result = prefunc()
+                    log(backgroundFunc.toString())
+                    result = backgroundFunc()
                 } catch (e: Exception) {
 
                 }
                 result
             }
-            nextFunc(result)
+            log(mainFunc.toString())
+            mainFunc(result)
         }
     }
 
     @JvmStatic
-    fun <T> excuOnIO(callable: Callable<T>) {
+    fun <T> excuOnIO(callable: CorouRunnable<T>) {
         val scope = CoroutineScope(Dispatchers.IO)
         scope.launch {
+            log("excuOnIO: task = " + callable.mTag)
             callable.call()
         }
     }
 
     @JvmStatic
-    fun <T> excuOnIOWithCallback(callable: Callable<T>,callback : Callback<T>) {
+    fun <T> excuOnIOWithCallback(callable: CorouRunnable<T>,callback : Callback<T>) {
         val scope = CoroutineScope(Dispatchers.Main)
         scope.launch {
             var result : T? = null
             withContext(Dispatchers.IO){
                 try {
+                    log("excuOnIOWithCallback: task = " + callable.mTag)
                     result = callable.call()
                 }catch (e : Exception){
                     callback.onError(e.message)
@@ -58,7 +61,6 @@ object CoroutineUtils {
     fun <T> submitWithCallback(runnable: CorouRunnable<T>, callback: Callback<T?>): CoroutinePro<*, *, *> {
         return object : CoroutinePro<String?, String?, T>() {
             override fun doInBackground(vararg args: String?): T? {
-                Log.e("xxx", String.format("start doInBackground: on Thread [%s]", Thread.currentThread().name))
                 val futureTask = FutureTask(runnable)
                 futureTask.run()
                 try {
@@ -73,7 +75,6 @@ object CoroutineUtils {
 
             override fun onPostExecute(res: T?) {
                 super.onPostExecute(res)
-                Log.e("xxx", String.format("receive res on thread [%s],res = %s", Thread.currentThread().name, res))
                 callback.onFinish(res)
             }
 
@@ -94,7 +95,6 @@ object CoroutineUtils {
     fun <T> submit(runnable: CorouRunnable<T>): CoroutinePro<*, *, *> {
         return object : CoroutinePro<String?, String?, T>() {
             override fun doInBackground(vararg args: String?): T? {
-                Log.e("xxx", String.format("start doInBackground: on Thread [%s]", Thread.currentThread().name))
                 val futureTask = FutureTask(runnable)
                 futureTask.run()
                 try {
@@ -109,7 +109,6 @@ object CoroutineUtils {
 
             override fun onPostExecute(res: T?) {
                 super.onPostExecute(res)
-                Log.e("xxx", String.format("receive res on thread [%s],res = %s", Thread.currentThread().name, res))
             }
 
         }.executeOnIO(runnable.tag)
@@ -119,5 +118,12 @@ object CoroutineUtils {
         fun onFinish(res: T?)
         fun onError(mes : String?)
         fun onCancel()
+    }
+
+    fun log(mes : String?){
+        val shouldLog= true
+        if (shouldLog){
+            Log.e(tag, String.format("message = %s ,t = %s", mes,Thread.currentThread().name))
+        }
     }
 }

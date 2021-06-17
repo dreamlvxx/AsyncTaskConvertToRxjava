@@ -154,6 +154,8 @@ public abstract class RxjavaTask<Params, Progress, Result>{
                 case MESSAGE_POST_PROGRESS:
                     result.mTask.onProgressUpdate(result.mData);
                     break;
+                default:
+                    break;
             }
         }
     }
